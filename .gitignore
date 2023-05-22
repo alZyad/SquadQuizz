@@ -3,7 +3,7 @@
 # dependencies
 /*/node_modules
 /*/.pnp
-/*.pnp.js
+/*/.pnp.js
 
 # testing
 /*/coverage
@@ -17,7 +17,7 @@
 
 # misc
 /*/.DS_Store
-*.pem
+/*/*.pem
 
 # debug
 /*/npm-debug.log*
