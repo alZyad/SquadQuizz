@@ -7,11 +7,13 @@ import {
   emitGoToQuizz,
   onGoToQuizzOrder,
 } from "../api/socket/navigationSocket";
+import { BasicButton } from "@/common/components/basicButton";
 
 export default function Lobby() {
   const router = useRouter<"/lobby/[lobbyId]">();
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { lobbyId } = router.query; // TODO: why is lobbyId undefined?
 
   useEffect(() => {
@@ -61,9 +63,18 @@ export default function Lobby() {
     }
   };
 
+  const copyLink = () => {
+    const currentURL = window.location.href;
+    navigator.clipboard.writeText(currentURL);
+    setLinkCopied(true);
+  };
+
   return (
     <>
       <NavigationPane currentPage={"lobby"} isAdmin={isAdmin} router={router} />
+      <ShareButton hoverColor="blueviolet" onClick={copyLink}>
+        {linkCopied ? "Copied !" : "Copy lobby link"}
+      </ShareButton>
       <QuizzGrid>
         <Quizz onClick={() => goToQuizz("1")}>option1</Quizz>
         <Quizz onClick={() => goToQuizz("2")}>option2</Quizz>
@@ -73,6 +84,14 @@ export default function Lobby() {
     </>
   );
 }
+
+const ShareButton = styled(BasicButton)`
+  display: block;
+  margin: 0 auto;
+  font-size: 12px;
+  padding: 10px;
+  background-color: #6b20b0;
+`;
 
 const QuizzGrid = styled.div`
   width: 80%;

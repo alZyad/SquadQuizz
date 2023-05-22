@@ -14,8 +14,8 @@ This is a web application that allows you to create a quizz with a series of que
 ## Features
 
 - [x] Create predefined lobby (hardcoded set of quizzes) and become admin of it
-- [ ] Access lobby/quizzes from other client by sharing the url to the other players
-  - [ ] Share lobby button
+- [x] Access lobby/quizzes from other client by sharing the url to the other players
+  - [x] Share lobby button
 - [ ] Players accessing the lobby will see the actions taken by the admin:
   - [x] Selection and navigation to a given quizz
   - [ ] Navigation back from the quizz to the lobby
