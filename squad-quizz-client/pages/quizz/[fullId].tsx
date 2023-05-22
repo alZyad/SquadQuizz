@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { socket } from "../api/socket/socket";
 import NavigationPane from "@/common/components/navigationPane";
+import SubmitTimer from "@/common/components/submitTimer";
+import { timeout } from "@/common/utils/global";
 
 type statusType = "correct" | "wrong" | "neutral";
 
@@ -14,12 +16,16 @@ const options = [
   { optionText: "Amal is my name", Correct: false },
 ];
 
+const submitTimerValue = 5; // in seconds
+
 export default function Home() {
   const router = useRouter<"/quizz/[fullId]">();
   const { fullId } = router.query;
   const [playerId, setPlayerId] = useState<String | null>(null);
   const [isAdmin, setIsAdmin] = useState(!!playerId);
   const [selectedOption, setSelectedOption] = useState<null | number>(null);
+  const [countdown, setCountdown] = useState(submitTimerValue);
+  const [countdownStarted, setCountdownStarted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [questionRevealed, setQuestionRevealed] = useState(false);
   const [optionsRevealed, setOptionsRevealed] = useState(false);
@@ -62,7 +68,16 @@ export default function Home() {
   });
 
   const onSubmit = () => {
-    setSubmitted(true);
+    setCountdownStarted(true);
+    executeCountdown(
+      submitTimerValue,
+      (countdown) => setCountdown(countdown),
+      () => {
+        setCountdown(0);
+        setCountdownStarted(false);
+        setSubmitted(true);
+      }
+    );
   };
 
   const revealQuestion = () => {
@@ -79,6 +94,17 @@ export default function Home() {
       });
   };
 
+  const executeCountdown = async (
+    timer: number,
+    intermediaryCallback: (countdown: number) => void,
+    finalCallback: () => void
+  ) => {
+    for (let countdown = timer; countdown > 0; countdown--) {
+      intermediaryCallback(countdown);
+      await timeout(1000);
+    }
+    finalCallback();
+  };
   return (
     <>
       <NavigationPane currentPage={"quizz"} isAdmin={isAdmin} router={router} />
@@ -118,12 +144,22 @@ export default function Home() {
               })}
             </OptionBlock>
             {!isAdmin && (
-              <SubmitButton
-                onClick={onSubmit}
-                disabled={submitted || selectedOption === null}
-              >
-                Submit
-              </SubmitButton>
+              <SubmitContainer>
+                <SubmitButton
+                  onClick={onSubmit}
+                  disabled={submitted || selectedOption === null}
+                >
+                  Submit
+                </SubmitButton>
+                {countdownStarted && (
+                  <SubmitTimerContainer>
+                    <SubmitTimer
+                      timer={countdown}
+                      totalTimer={submitTimerValue}
+                    />
+                  </SubmitTimerContainer>
+                )}
+              </SubmitContainer>
             )}
           </>
         ) : (
@@ -181,19 +217,32 @@ const OptionBlock = styled.div`
   padding-bottom: 10px;
 `;
 
+const SubmitContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 40px;
+`;
+
 const SubmitButton = styled.button`
   width: 100px;
   padding: 10px;
+  margin: 0 10px;
   font-size: 15px;
   background-color: ${(props) => (props.disabled ? "#414141" : "#02024b")};
   color: snow;
   border: 0px;
   border-radius: 5px;
   display: block;
-  margin: auto;
   :hover {
     background-color: ${(props) => (props.disabled ? "#414141" : "#02025e")};
   }
+`;
+
+const SubmitTimerContainer = styled.div`
+  margin: 0 10px;
+  aspect-ratio: 1;
+  text-align: center;
 `;
 
 const AdminBlock = styled.div`

@@ -22,7 +22,8 @@ This is a web application that allows you to create a quizz with a series of que
   - [x] Reveal of the question and/or options
   - [ ] Accessing the link of a quizz/lobby shows the current state of what the admin sees
 - [x] Accessing lobby or quizzes from another window on the same client correctly identifies the admin/player
-- [ ] Submitting an answer resolves the quizz after a hardcoded delay
+- [x] Submitting an answer resolves the quizz after a hardcoded delay
+- [ ] Make pages scrollable
 
 # Dev features
 
